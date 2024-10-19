@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 
 const validationSchemaAuth = yup.object({
-    username: yup
+    email: yup
       .string("Entrez votre nom d'utilisateur")
       .required("Le nom d'utilisateur est obligatoire"),
     password: yup

@@ -2,6 +2,7 @@ import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import Login from '../views/Login';
 import Home from '../views/Home';
+import { ProtectRoute } from '../middleware/auth';
 
 const routes = [
     {
@@ -10,7 +11,11 @@ const routes = [
     },
     {
         path: '/Home',
-        element: <Home />,
+        element: (
+            <ProtectRoute>
+                <Home />
+            </ProtectRoute>
+        ),
     },
 ];
 

@@ -2,22 +2,9 @@ import React from "react";
 import Images from "../../helper/Images";
 import convertAndCompress from "../../helper/convertAndCompress.js";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-
-const validationSchema = Yup.object({
-  lastName: Yup.string().required("Nom requis"),
-  firstName: Yup.string().required("Prénom requis"),
-  address: Yup.string().required("Adresse requise"),
-  email: Yup.string().email("Email invalide").required("Email requis"),
-  password: Yup.string().required("Mot de passe requis"),
-});
-
-const logoStyle = {
-  width: "100px",
-  height: "auto",
-  backgroundSize: "cover",
-  cursor: "pointer",
-};
+import validationSchema from "../../utils/validationSchemaUser.js";
+import { registerUserWithForm } from "../../helper/helperUser.js";
+import toast, { Toaster } from 'react-hot-toast';
 
 const styles = {
   profile: {
@@ -41,7 +28,7 @@ const styles = {
   },
 };
 
-export default function InscriptionForm() {
+export default function InscriptionForm({ toggleFormInscription}) {
   const { profileImage } = Images;
   const [file, setFile] = React.useState("");
 
@@ -60,8 +47,17 @@ export default function InscriptionForm() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-      // navigate to Home page on form submission
+      const createPromise = registerUserWithForm(values, file);
+
+      createPromise
+        .then(({ msg }) => {
+          toast.success(msg); // Affiche le message en cas de succès
+          formik.resetForm()
+          toggleFormInscription()
+        })
+        .catch(({ error, msg }) => {
+          toast.error(msg || error); // Affiche le message d'erreur en cas d'échec
+        });
     },
   });
 
@@ -69,7 +65,11 @@ export default function InscriptionForm() {
     <main className="my-auto flex flex-col items-center mx-auto w-full max-w-md">
       <div style={styles.profile}>
         <label htmlFor="profile">
-          <img alt="avatar" src={file || profileImage} style={styles.profileImg} />
+          <img
+            alt="avatar"
+            src={file || profileImage}
+            style={styles.profileImg}
+          />
         </label>
 
         <input
