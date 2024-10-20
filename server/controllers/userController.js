@@ -76,3 +76,63 @@ export async function registerUserWithForm(req, res) {
     res.status(500).send({ error });
   }
 }
+
+export async function getUser(req, res) {
+  const { userId } = req.user;
+  try {
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Convert user document to a plain object
+    const userData = user.toObject();
+
+    // Optionally, you can choose to remove the password from the response
+    const { password, ...userWithoutPassword } = userData;
+
+    // If you still want to include the hashed password, uncomment the line below
+    // res.status(200).json({ user: { ...userWithoutPassword, password } }); 
+
+    // Or just return user data without the password
+    res.status(200).json({ user: userWithoutPassword });
+    
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "An error occurred. Please try again." });
+  }
+}
+
+export async function updateUser(req, res) {
+  try {
+    const { userId } = req.user;
+    //console.log('user ID: ',userId)
+
+    if (userId) {
+      const { parsedProfileUser } = req.body;
+      const parseUpdateProfileUser = JSON.parse(parsedProfileUser);
+      //console.log("Parse Update Profile: ",parseUpdateProfileUser)
+      const existingUser = await User.findById(userId);
+      if (!existingUser) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+
+      (existingUser.firstName = parseUpdateProfileUser.firstName),
+        (existingUser.lastName = parseUpdateProfileUser.lastName),
+        (existingUser.email = parseUpdateProfileUser.email),
+        (existingUser.address = parseUpdateProfileUser.address),
+        (existingUser.profile = parseUpdateProfileUser.profile);
+
+      await existingUser.save();
+      return res
+        .status(201)
+        .send({ msg: "Votre Profile a été modifier avec succes" });
+    } else {
+      return res.status(401).send({ error: "User Not Found...!" });
+    }
+  } catch (error) {
+    console.error("ERROR IN USER UPDATE : ", error);
+    return res.status(500).send({ error: error.message });
+  }
+}
