@@ -1,0 +1,121 @@
+export async function getALlExpenses() {
+  const token = localStorage.getItem("tokenUser");
+
+  if (token) {
+    try {
+      // Assuming you have a backend endpoint to fetch the props based on userID
+      const response = await fetch(`http://localhost:8080/api/getAllExpenses`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const { expenses } = await response.json();
+
+      if (response.status == 200) {
+        return Promise.resolve({ expenses });
+      }
+    } catch (error) {
+      console.error("Error fetching props:", error);
+    }
+  }
+}
+
+/** add Expense function */
+export async function AddExpense(values) {
+  try {
+    const token = localStorage.getItem("tokenUser");
+
+    if (!token) {
+      return Promise.reject({
+        error: "Error user has no access to that action",
+      }); // No token means no access
+    }
+
+    const response = await fetch("http://localhost:8080/api/AddExpense", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ newExpense: values }),
+    });
+
+    const { msg } = await response.json();
+
+    if (response.status === 409) {
+      return Promise.reject({ msg });
+    }
+
+    return Promise.resolve({ msg });
+  } catch (error) {
+    return Promise.reject({
+      error: "Error network Couldn't add a category...!",
+    });
+  }
+}
+
+/** update Expense function */
+export async function UpdateExpense(values) {
+  try {
+    const token = localStorage.getItem("tokenUser");
+
+    if (!token) {
+      return Promise.reject({
+        error: "Error user has no access to that action",
+      }); // No token means no access
+    }
+    const response = await fetch("http://localhost:8080/api/UpdateExpense", {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ updateExpense: values }),
+    });
+
+    const { msg, updatedExpense } = await response.json();
+
+    if (response.status === 409) {
+      return Promise.reject({ msg });
+    }
+
+    return Promise.resolve({ msg, updatedExpense });
+  } catch (error) {
+    return Promise.reject({
+      error: "Error network Couldn't add a category...!",
+    });
+  }
+}
+
+export async function deleteExpense(expenseId) {
+  const token = localStorage.getItem("tokenUser");
+  console.log(`deleting ${expenseId}`);
+  if (!token) {
+    return Promise.reject({ error });
+  }
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/deleteExpense/${expenseId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        // Add body if necessary
+      }
+    );
+    const { msg } = await response.json();
+    if (response.ok) {
+      return Promise.resolve({ msg });
+    } else {
+      console.error("Error deleting Depense:", { error });
+      return Promise.reject({ error });
+    }
+  } catch (error) {
+    console.error("Error deleting Depense:", error);
+    return Promise.reject({ error });
+  }
+}

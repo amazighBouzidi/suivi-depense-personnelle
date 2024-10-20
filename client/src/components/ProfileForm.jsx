@@ -76,7 +76,7 @@ export default function ProfileForm() {
       <Toaster position="top-center" reverseOrder={false}></Toaster>
       <div className="container mx-auto py-8">
         <div className="grid grid-cols-12 sm:grid-cols-12 gap-6 px-4">
-          <div className="col-span-4 sm:col-span-12">
+          <div className="col-span-12 sm:col-span-12">
             <div className="bg-white shadow rounded-lg p-6">
               <div style={styles.profile}>
                 <label htmlFor="profile">
@@ -110,7 +110,7 @@ export default function ProfileForm() {
                           htmlFor="lastName"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Last Name
+                          Nom
                         </label>
                         <Field
                           type="text"
@@ -131,7 +131,7 @@ export default function ProfileForm() {
                           htmlFor="firstName"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          First Name
+                          Prénom
                         </label>
                         <Field
                           type="text"
@@ -152,7 +152,7 @@ export default function ProfileForm() {
                           htmlFor="address"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Address
+                          Addresse
                         </label>
                         <Field
                           type="text"
@@ -193,7 +193,7 @@ export default function ProfileForm() {
                       <div className="w-full">
                         <button
                           type="submit"
-                          className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                           className="flex w-full justify-center rounded-md bg-green-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                           Modifier
                         </button>
@@ -201,7 +201,7 @@ export default function ProfileForm() {
                       <div className="ml-2 w-full">
                         <button
                           type="reset"
-                          className="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
+                           className="flex w-full justify-center rounded-md bg-gray-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                           Annuler
                         </button>
