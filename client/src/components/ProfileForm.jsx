@@ -82,7 +82,7 @@ export default function ProfileForm() {
                 <label htmlFor="profile">
                   <img
                     alt="avatar"
-                    src={file || profileImage}
+                    src={file === 'null' ? profileImage : file}
                     style={styles.profileImg}
                   />
                 </label>

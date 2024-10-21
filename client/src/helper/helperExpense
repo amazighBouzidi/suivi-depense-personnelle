@@ -119,3 +119,51 @@ export async function deleteExpense(expenseId) {
     return Promise.reject({ error });
   }
 }
+
+export async function getAllAmountMonthExpenses(){
+  const token = localStorage.getItem("tokenUser");
+
+  if (token) {
+    try {
+      // Assuming you have a backend endpoint to fetch the props based on userID
+      const response = await fetch(`http://localhost:8080/api/getAllAmountMonthExpenses`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const { expenses } = await response.json();
+
+      if (response.status == 200) {
+        return Promise.resolve({ expenses });
+      }
+    } catch (error) {
+      console.error("Error fetching props:", error);
+    }
+  }
+}
+
+export async function getAllAmountYearExpensesByYear(){
+  const token = localStorage.getItem("tokenUser");
+
+  if (token) {
+    try {
+      // Assuming you have a backend endpoint to fetch the props based on userID
+      const response = await fetch(`http://localhost:8080/api/getAllAmountYearExpensesByYear`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const { expenses } = await response.json();
+
+      if (response.status == 200) {
+        return Promise.resolve({ expenses });
+      }
+    } catch (error) {
+      console.error("Error fetching props:", error);
+    }
+  }
+}
