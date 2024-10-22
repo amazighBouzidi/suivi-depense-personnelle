@@ -49,6 +49,7 @@ export default function PieActiveArc() {
           },
         ]}
         height={200}
+        width={500}
       />
      <h1 className="text-center">Charts - Pie</h1>
     </div>

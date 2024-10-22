@@ -18,6 +18,7 @@ router.route('/getUser').get(Auth, userController.getUser)
 router.route('/getAllExpenses').get(Auth, expenseController.getAllExepenses)
 router.route('/getAllAmountMonthExpenses').get(Auth, expenseController.getAllAmountMonthExpenses)
 router.route('/getAllAmountYearExpensesByYear').get(Auth, expenseController.getAllAmountYearExpensesByYear)
+router.route('/getAllAmountMonthCurrentExpenses').get(Auth, expenseController.getAllAmountMonthCurrentExpenses)
 
 /**PUT METHOD */
 router.route('/updateProfile').put(Auth, userController.updateUser); // is use to update the user profile

@@ -167,3 +167,27 @@ export async function getAllAmountYearExpensesByYear(){
     }
   }
 }
+
+export async function getAllAmountMonthCurrentExpenses(){
+  const token = localStorage.getItem("tokenUser");
+
+  if (token) {
+    try {
+      // Assuming you have a backend endpoint to fetch the props based on userID
+      const response = await fetch(`http://localhost:8080/api/getAllAmountMonthCurrentExpenses`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const { expenses } = await response.json();
+
+      if (response.status == 200) {
+        return Promise.resolve({ expenses });
+      }
+    } catch (error) {
+      console.error("Error fetching props:", error);
+    }
+  }
+}

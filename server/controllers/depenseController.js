@@ -71,12 +71,10 @@ export async function UpdateExpense(req, res) {
       );
 
       console.log("Updated Expense: ", updatedExpense);
-      res
-        .status(200)
-        .json({
-          msg: "Expense updated successfully",
-          updatedExpense: updateExpense,
-        });
+      res.status(200).json({
+        msg: "Expense updated successfully",
+        updatedExpense: updateExpense,
+      });
     } else {
       return res.status(401).send({ error: "User Not Found...!" });
     }
@@ -126,7 +124,7 @@ export async function getAllAmountMonthExpenses(req, res) {
     const expenses = await Depense.aggregate([
       {
         $match: {
-          user: new mongoose.Types.ObjectId(userId) // Match expenses for the logged-in user
+          user: new mongoose.Types.ObjectId(userId), // Match expenses for the logged-in user
         },
       },
       {
@@ -157,45 +155,96 @@ export async function getAllAmountMonthExpenses(req, res) {
 }
 
 export async function getAllAmountYearExpensesByYear(req, res) {
-    const { userId } = req.user;
-  
-    try {
-      // Check if the user exists in the database
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-  
-      // Aggregate query to group expenses by year and category, summing up the amounts
-      const expenses = await Depense.aggregate([
-        {
-          $match: {
-            user: new mongoose.Types.ObjectId(userId), // Match expenses for the logged-in user
-          },
-        },
-        {
-          $group: {
-            _id: {
-              year: { $year: "$date" }, // Extract the year from the date
-              category: "$category", // Group by category
-            },
-            totalAmount: { $sum: "$amount" }, // Sum the amount per category and year
-          },
-        },
-        {
-          $sort: { "_id.year": 1 }, // Sort by year
-        },
-      ]);
-  
-      if (!expenses || expenses.length === 0) {
-        return res.status(404).json({ error: "No expenses found" });
-      }
-  
-      // Return the aggregated results
-      return res.status(200).json({ expenses });
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-      return res.status(500).json({ error: "Internal server error" });
+  const { userId } = req.user;
+
+  try {
+    // Check if the user exists in the database
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
+
+    // Aggregate query to group expenses by year and category, summing up the amounts
+    const expenses = await Depense.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(userId), // Match expenses for the logged-in user
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$date" }, // Extract the year from the date
+            category: "$category", // Group by category
+          },
+          totalAmount: { $sum: "$amount" }, // Sum the amount per category and year
+        },
+      },
+      {
+        $sort: { "_id.year": 1 }, // Sort by year
+      },
+    ]);
+
+    if (!expenses || expenses.length === 0) {
+      return res.status(404).json({ error: "No expenses found" });
+    }
+
+    // Return the aggregated results
+    return res.status(200).json({ expenses });
+  } catch (error) {
+    console.error("Error fetching expenses:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
-  
+}
+export async function getAllAmountMonthCurrentExpenses(req, res) {
+  const { userId } = req.user;
+
+  try {
+    // Check if the user exists in the database
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Get the current year and month
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed, so add 1
+
+    // Aggregate query to group expenses by current month, summing up the amounts
+    const expenses = await Depense.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(userId), // Match expenses for the logged-in user
+          $expr: {
+            $and: [
+              { $eq: [{ $year: "$date" }, currentYear] }, // Match current year
+              { $eq: [{ $month: "$date" }, currentMonth] }, // Match current month
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            category: "$category", // Group by category
+          },
+          totalAmount: { $sum: "$amount" }, // Sum the amount per category
+        },
+      },
+      {
+        $sort: { "_id.category": 1 }, // Sort by category
+      },
+    ]);
+
+    if (!expenses || expenses.length === 0) {
+      return res.status(404).json({ error: "No expenses found for the current month" });
+    }
+
+    // Return the aggregated results
+    return res.status(200).json({ expenses });
+  } catch (error) {
+    console.error("Error fetching expenses:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
